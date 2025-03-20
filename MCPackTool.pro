@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     mainmenu.cpp \
     mainwindow.cpp \
+    mcresourcepack.cpp \
     mergedefaultworkerthread.cpp \
     mergenondefaultworkerthread.cpp \
     newworkspace.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     importmenu.h \
     mainmenu.h \
     mainwindow.h \
+    mcresourcepack.h \
     mergedefaultworkerthread.h \
     mergenondefaultworkerthread.h \
     newworkspace.h \
