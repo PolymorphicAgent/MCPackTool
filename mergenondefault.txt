@@ -1,0 +1,38 @@
+-cannot directly exec prompt from worker thread
+-use signals/slots for data transfers b/w worker thread and conflict prompter (utils?)
+
+Brainstorm:
+
+-somewhere (prob. utils) have a static slot funct. connected to a signal from the merger thread
+  -creates the conflict prompt and emits another signal somehow connected back to the merger thread
+-merger thread has somehow been waiting while the user selects stuff on the prompt
+-loop the above for every node conflict
+
+Info I know:
+
+-I can create a static slot function in utils that does what it's supposed to
+ i.e prompt the user and emit the signal
+-I know how to connect a static slot to the thread's signals
+
+Info I need:
+
+-How do I connect the utils' static slot back to the worker thread (mb use a slot?)
+-How the heck am I supposed to wait in the worker thread for a signal?
+
+Gathered info:
+
+-https://stackoverflow.com/questions/31358646/qt5-how-to-wait-for-a-signal-in-a-thread (accepted answer)
+    -uses qtimer to wait for a signal in the worker thread
+
+Todo:
+
+create static slot in Utils that prompts user and emits signal w/ payload (int); ✅
+-create conflictprompt instance ✅
+-set conflictprompt options ✅
+finish ConflictPrompt class (finish choice selection) ✅
+-> add 'cancel' button, and 'apply to rest' button
+-move step 1 to another class in GUI thread ✅
+use info on stackoverflow to wait in thread for response and gather int data;✅
+create preprocessing that gets the QImage and discriminates against jsons✅
+
+rethink progression algorithm

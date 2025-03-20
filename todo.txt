@@ -1,0 +1,30 @@
+BIG: add dark mode compatabilty
+
+QUICKMERGE
+-keep track of the output files, make sure that they don't conflict ✅
+-finish mcmeta/pack image merging ✅
+-copy to minecraft ✅
+-tie 'esc' press on settings ✅
+-fix 'no file selected' in qms✅
+-optimize general algorithm, very messy
+-fix pack format = -1 edge case
+-work on merged w/ custom settings
+-fix 'esc' after being in merge settings
+-fix/smoothen progress bars
+-when 'x' clicked on quickmergesettings window, check if any changes were made before prompting 'Save?'
+-provide stats in 'merge successful' dialog (e.g. save place, any warnings)
+
+WORKSPACES (ohhhh no)
+
+-do stuff (yes, stuff)
+
+
+-CHECK LINUX COMPATABLITY!
+
+--> wayyy in the future (after EVERYTHING ELSE is done):
+
+-add function that scans current resourcepacks (.minecraft/resourcepacks) for outdated versions, shows the user, then updates them from the web
+
+-textured ui/sounds/ambience (in your dreammmms boi)
+
+-ability to modify the above with a 'resourcepack' that is editable (in ya biggah dreammms boi)

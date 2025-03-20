@@ -1,0 +1,56 @@
+Quickmerge settings layout
+✅ = ui implemented;
+✅✅ = functionality implemented;
+base functionality:
+    set rules for merging packs
+✅✅set mode:
+    either
+        automerge - merge without prompting user (default)
+            pack1 will be given priority in node conflicts and info merges
+    or
+        manualmerge - prompt user at node conflicts
+         |- ***prompt functionality implemented in QuickMerge class, not here***
+            when a conflicting node set is found, ask user what to do:
+                use pack1 node (default)
+                use pack2 node
+                use no node
+✅set info:
+    ✅✅description - the mcmeta pack description
+        default: pack1 mcmeta description + {[Merged by MCPackTool]}
+        pack2 mcmeta description + {[Merged by MCPackTool]}
+        user input field + {[Merged by MCPackTool]}
+    ✅✅name - name of output file
+        default: [pack1 filename] + [pack2 filename] + {[Merged by MCPackTool]}
+        pack1 filename + {[Merged by MCPackTool]}
+        pack2 filename + {[Merged by MCPackTool]}
+        user input field + {[Merged by MCPackTool]}
+    ✅packImage - the pack image
+        default: pack1 pack image
+        pack2 pack image
+        user select file
+✅set export:
+    ✅path - where to export to
+        ✅default: prompt user to select path
+        ✅to minecraft
+            unavailable if minecraft isn't installed - when selected, for minecraft check.
+                if check fails, prompt user to install minecraft or locate '.minecraft' directory
+    ✅✅type - export as
+        as zip
+        as dir
+
+Sending info back to QuickMerge class
+
+emit signal:
+    quickMergeSettngsChanged(int, int, QString, int, QString, int, QString, int, QString, int);
+    quickMergeSettngsChanged(int mode,
+                            int description, QString customDescription,
+                            int name, QString customName,
+                            int image, QString customImage,
+                            int toMinecraft, QString customPath,
+                            int exportAs);
+    on signal 'clicked()' for 'Apply'
+
+Util function necessary:
+
+locateMC for export to mc
+    user() for getting user
