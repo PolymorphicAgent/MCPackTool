@@ -5,7 +5,7 @@ QUICKMERGE
 -finish mcmeta/pack image merging ✅
 -copy to minecraft ✅
 -tie 'esc' press on settings ✅
--fix 'no file selected' in qms✅
+-fix 'no file selected' in qms ✅
 -optimize general algorithm, very messy
 -fix pack format = -1 edge case
 -work on merged w/ custom settings

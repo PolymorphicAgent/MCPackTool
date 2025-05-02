@@ -3,15 +3,17 @@
 
 #include <vector>
 
+#include <KZip>
+
 #include <QGuiApplication>
 #include <QStyleHints>
 #include <QStringList>
 #include <QEventLoop>
-#include <ZipFile.h>
 #include <QProcess>
 #include <QString>
 #include <QDebug>
 #include <QIcon>
+#include <QSet>
 #include <QDir>
 
 #ifdef Q_OS_WIN
@@ -19,6 +21,8 @@
 #include <windows.h>
 #include <Lmcons.h>
 #endif
+
+#include "MCResourcePack.h"
 
 class Utils : public QObject
 {
@@ -388,13 +392,15 @@ public:
         return result.removeFirst();
     }
 
-    static QString inline stringify(const std::vector<ZipArchiveEntry::Ptr>& v){
-        std::string result = "[";
-        for(ZipArchiveEntry::Ptr i:v){
-            result+=i->GetFullName()+", ";
+    static QString inline stringify(const std::vector<KArchiveEntry*>& v) {
+        QString result = "[";
+        for (KArchiveEntry *i : v) {
+            result += QString::fromStdString(i->name().toStdString()) + ", ";
         }
-        result = result.substr(0, result.length()-2) + "]";
-        return QString::fromStdString(result);
+        if (!v.empty())
+            result.chop(2); // remove trailing comma+space
+        result += "]";
+        return result;
     }
 
     static QStringList inline mergeLists(const QStringList& a, const QStringList& b){
@@ -416,9 +422,9 @@ public:
 
     static int find(const QString&,const QStringList&);
 
-    static bool find(const QString&, std::vector<ZipArchiveEntry::Ptr>&);
+    static bool find(const QString&, std::vector<KArchiveEntry*>&);
 
-    static int iFind(const QString&, std::vector<ZipArchiveEntry::Ptr>&);
+    static int iFind(const QString&, std::vector<KArchiveEntry*>&);
 
     static bool cp(const QString&, const QString&);
 
@@ -449,7 +455,7 @@ public:
 
     static int minValue(int, int);
 
-    static bool isJson(std::istream*);
+    static bool isJson(QByteArray*);
 
     static bool isImage(std::istream*);
 
@@ -458,15 +464,22 @@ public:
     static void debaggerlogger(const QString&);
 
     static QString limitedLength(const QString&, int);
+
+    // Checks if an element with baseName exists in list
+    static bool elementExists(const QString &baseName,
+                              const QList<MCResourcePackElement*> &list);
+
+    // Removes and deletes the element with baseName from the list
+    static void removeElement(const QString &baseName,
+                              QList<MCResourcePackElement*> &list);
+
 public slots:
-    static void postMergeNonDefault(QString,ZipArchive::Ptr);
+    static void postMergeNonDefault(QString);
 
 private:
     static QString inline USER;
 
     static QString inline NAME;
-
-    static ZipArchive::Ptr inline AR;
 };
 
 #endif // UTILS_H

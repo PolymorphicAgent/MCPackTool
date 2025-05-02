@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui quick qml quickwidgets svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -69,50 +69,87 @@ RESOURCES += \
     icons.qrc
 
 #ziplib
-win32: LIBS += -L$$PWD/libs/ -lZipLib
+# win32: LIBS += -L$$PWD/libs/ -lZipLib
 
-INCLUDEPATH += $$PWD/ziplib/Source/ZipLib
-DEPENDPATH += $$PWD/ziplib/Source/ZipLib
+# INCLUDEPATH += $$PWD/ziplib/Source/ZipLib
+# DEPENDPATH += $$PWD/ziplib/Source/ZipLib
 
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/ZipLib.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libZipLib.a
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/ZipLib.lib
+# else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libZipLib.a
 
 #jsoncpp
-win32: LIBS += -L$$PWD/libs/ -ljsoncpp
+# win32: LIBS += -L$$PWD/libs/ -ljsoncpp
 
-INCLUDEPATH += $$PWD/jsoncpp/include/json
-DEPENDPATH += $$PWD/jsoncpp/include/json
+# INCLUDEPATH += $$PWD/jsoncpp/include/json
+# DEPENDPATH += $$PWD/jsoncpp/include/json
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/jsoncpp.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libjsoncpp.a
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/jsoncpp.lib
+# else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libjsoncpp.a
+
+
+
+# #karchive - Release
+# win32: LIBS += -L$$PWD/libs/msvc2022_64/Release/karchive-static/lib/ -lKF6Archive
+
+# INCLUDEPATH += $$PWD/libs/msvc2022_64/Release/karchive-static/include/KF6/KArchive
+# DEPENDPATH += $$PWD/libs/msvc2022_64/Release/karchive-static/include/KF6/KArchive
+
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/msvc2022_64/Release/karchive-static/lib/KF6Archive.lib
+
+# #zlib - Release
+# win32: LIBS += -L$$PWD/libs/msvc2022_64/Release/zlib/lib/ -lzlibstatic
+
+# INCLUDEPATH += $$PWD/libs/msvc2022_64/Release/zlib/include
+# DEPENDPATH += $$PWD/libs/msvc2022_64/Release/zlib/include
+
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/msvc2022_64/Release/zlib/lib/zlibstatic.lib
+
+
+#karchive - Debug
+win32: LIBS += -L$$PWD/libs/msvc2022_64/Debug/karchive-static/lib/ -lKF6Archive
+
+INCLUDEPATH += $$PWD/libs/msvc2022_64/Debug/karchive-static/include/KF6/KArchive
+DEPENDPATH += $$PWD/libs/msvc2022_64/Debug/karchive-static/include/KF6/KArchive
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/msvc2022_64/Debug/karchive-static/lib/KF6Archive.lib
+
+#zlib - Debug
+win32: LIBS += -L$$PWD/libs/msvc2022_64/Debug/zlib/lib/ -lzlibstatic
+
+INCLUDEPATH += $$PWD/libs/msvc2022_64/Debug/zlib/include
+DEPENDPATH += $$PWD/libs/msvc2022_64/Debug/zlib/include
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/msvc2022_64/Debug/zlib/lib/zlibstatic.lib
+
+
 
 #bzip2
-win32: LIBS += -L$$PWD/libs/ -lbzip2
+# win32: LIBS += -L$$PWD/libs/ -lbzip2
 
-INCLUDEPATH += $$PWD/ziplib/Source/ZipLib/extlibs/bzip2
-DEPENDPATH += $$PWD/ziplib/Source/ZipLib/extlibs/bzip2
+# INCLUDEPATH += $$PWD/ziplib/Source/ZipLib/extlibs/bzip2
+# DEPENDPATH += $$PWD/ziplib/Source/ZipLib/extlibs/bzip2
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/bzip2.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libbzip2.a
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/bzip2.lib
+# else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libbzip2.a
 
 #lzma
-win32: LIBS += -L$$PWD/libs/ -llzma
+# win32: LIBS += -L$$PWD/libs/ -llzma
 
-INCLUDEPATH += $$PWD/libs
-DEPENDPATH += $$PWD/libs
+# INCLUDEPATH += $$PWD/libs
+# DEPENDPATH += $$PWD/libs
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/lzma.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/liblzma.a
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/lzma.lib
+# else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/liblzma.a
 
 #zlib
 
-win32: LIBS += -L$$PWD/libs/ -lzlib
+# win32: LIBS += -L$$PWD/libs/ -lzlib
 
-INCLUDEPATH += $$PWD/libs
-DEPENDPATH += $$PWD/libs
+# INCLUDEPATH += $$PWD/libs
+# DEPENDPATH += $$PWD/libs
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/zlib.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libzlib.a
+# win32:!win32-g++: PRE_TARGETDEPS += $$PWD/libs/zlib.lib
+# else:win32-g++: PRE_TARGETDEPS += $$PWD/libs/libzlib.a
 
 #eof

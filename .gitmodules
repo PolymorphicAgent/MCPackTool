@@ -1,3 +1,3 @@
-[submodule "jsoncpp"]
-	path = jsoncpp
-	url = https://github.com/open-source-parsers/jsoncpp.git
+[submodule "karchive"]
+	path = karchive
+	url = https://github.com/KDE/karchive.git

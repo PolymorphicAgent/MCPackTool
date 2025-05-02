@@ -3,6 +3,9 @@
         <file>info.ico</file>
         <file>folder.ico</file>
         <file>check.ico</file>
+        <file>BlueSpinner.json</file>
+        <file>spinner.qml</file>
+        <file>check.svg</file>
     </qresource>
     <qresource prefix="/images">
         <file>JSON.png</file>

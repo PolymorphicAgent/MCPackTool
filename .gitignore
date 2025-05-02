@@ -80,8 +80,10 @@ CMakeLists.txt.user*
 .pch/
 .rcc/
 .uic/
-/build*/
-/fstruc*/
+build/
 
 # Custom files
 sloccount-command.txt
+
+# Custom Directories
+fstruc/
