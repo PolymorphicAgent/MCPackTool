@@ -87,3 +87,5 @@ sloccount-command.txt
 
 # Custom Directories
 fstruc/
+libs/mingw_64
+libs/old,unrelated,broken
