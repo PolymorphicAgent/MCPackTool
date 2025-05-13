@@ -3,6 +3,7 @@
 
 #include <QFileInfo>
 #include <QThread>
+#include <QBuffer>
 #include <QFile>
 #include <QDir>
 
@@ -170,7 +171,7 @@ public:
     //     emit doneMerging(outputFilePath, output);
     // }
 signals:
-    void doneMerging(QString, KZip*);
+    void doneMerging(QString);
     void progress(int bar, int progress);
 private:
     // Helper: Recursively add entries from a KArchiveDirectory that match a given prefix.
