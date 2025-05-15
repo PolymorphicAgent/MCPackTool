@@ -416,9 +416,9 @@ public:
 
     //static bool unzip(QString, QString);
 
-    static bool mergeDefault(const QString&, const QString&);
+    // static bool mergeDefault(const QString&, const QString&);
 
-    static bool mergeNonDefault(const QString&, const QString&, int, int, QString, int, QString, int, QString, int, QString, int);
+    static bool merge(const QString&, const QString&, int, int, QString, int, QString, int, QString, int, QString, int);
 
     static int find(const QString&,const QStringList&);
 

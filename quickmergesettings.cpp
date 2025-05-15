@@ -324,8 +324,8 @@ void QuickMergeSettings::exportCindexChanged(int index){
 }
 
 void QuickMergeSettings::applyClicked(){
-    if(exportC -> currentIndex() == 0)
-        exportCT -> setCurrentIndex(0);
+    // if(exportC -> currentIndex() == 0)
+    //     exportCT -> setCurrentIndex(0);
     if(infoCPI -> currentIndex() == 2&&Utils::compareQIcon(infoPIS->icon(),*folder)){
         QMessageBox::critical(this, "MCPackTool", "Please select a pack PNG.", QMessageBox::Ok);
     }else if(exportC -> currentIndex() == 1&&Utils::compareQIcon(exportM->icon(),*folder)){

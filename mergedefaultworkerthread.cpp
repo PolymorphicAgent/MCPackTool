@@ -151,39 +151,4 @@ void MergeDefaultWorkerThread::run() {
     emit progress(2, 100);
     emit doneMerging(outZip);
 
-    // // 4) Export via Utils helper (creates ZIP, pack.mcmeta, pack.png)
-    // QString outPath = Utils::ExportMergedPack(merged,
-    //                                           Utils::extractName(path1),
-    //                                           Utils::extractName(path2),
-    //                                           /* default options */);
-
 }
-
-// // A recursive helper to collect entries that start with a given prefix.
-// // Note: For simplicity, we build the full path by concatenating parentPath and the entry’s name.
-// void MergeDefaultWorkerThread::collectEntries(const KArchiveDirectory *dir,
-//                                               QVector<const KArchiveEntry*>& outEntries,
-//                                               QSet<QString>& outNames,
-//                                               const QString &prefix,
-//                                               const QString &parentPath)
-// {
-//     // Get the names of all entries directly under this directory.
-//     QStringList names = dir->entries();
-//     for (const QString &name : names) {
-//         // Build the full path (using '/' as a separator)
-//         QString fullPath = parentPath.isEmpty() ? name : parentPath + "/" + name;
-//         const KArchiveEntry *entry = dir->entry(name);
-//         // Check if the full path begins with the required prefix.
-//         if (fullPath.startsWith(prefix)) {
-//             if (!outNames.contains(fullPath)) {
-//                 outEntries.append(entry);
-//                 outNames.insert(fullPath);
-//             }
-//         }
-//         // If the entry is a directory, recurse into it.
-//         if (entry->isDirectory()) {
-//             const KArchiveDirectory *subDir = static_cast<const KArchiveDirectory*>(entry);
-//             collectEntries(subDir, outEntries, outNames, prefix, fullPath);
-//         }
-//     }
-// }

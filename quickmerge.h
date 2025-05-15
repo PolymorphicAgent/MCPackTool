@@ -21,7 +21,7 @@ private slots:
     void init();
 private:
     void reset();
-    QPushButton         *pack1,             *pack2,             *merge,      *settings, *back;
+    QPushButton         *pack1,             *pack2,             *merge,      *settings,  *back;
     QLabel              *pack1L,            *pack2L,            *title;
     QIcon               *check,             *folder,            *info;
     QLabel              *pack1ButtonLabel,  *pack2ButtonLabel;
@@ -29,10 +29,9 @@ private:
     QFileDialog         *fileDialog;
     QDir                *mcDir;
     QuickMergeSettings  *qs;
-    int                 mode,              description,         name,        image,     toMinecraft, exportAs;
-    QString             customDescription, customName,          customImage,            customPath;
-    QString             p1Path,            p2Path,              dirSlash;
-    bool                settingsSet;
+    int                 mode = 0,           description = 0,    name = 0,    image = 0,  toMinecraft = 0, exportAs = 0;
+    QString             customDescription,  customName,         customImage, customPath;
+    QString             p1Path,             p2Path,             dirSlash;
 signals:
     void toMain();
 protected:

@@ -1,27 +1,35 @@
-#ifndef MERGENONDEFAULTWORKERTHREAD_H
-#define MERGENONDEFAULTWORKERTHREAD_H
+#ifndef MERGEWORKERTHREAD_H
+#define MERGEWORKERTHREAD_H
 
-#include <fstream>
+// #include <fstream>
 
+#include <QJsonDocument>
+#include <QMessageBox>
 #include <QEventLoop>
 #include <QFileInfo>
 #include <QThread>
+#include <QBuffer>
 #include <QTimer>
+#include <QImage>
 #include <QFile>
 #include <QDir>
 
-#include "utils.h"
+#include <KZip>
+#include <KArchiveDirectory>
+#include <KArchiveFile>
+
 #include "guithreadslotter.h"
 
-class MergeNonDefaultWorkerThread : public QThread
+class MergeWorkerThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit MergeNonDefaultWorkerThread(QObject *parent = nullptr);
+    explicit MergeWorkerThread(QObject *parent = nullptr);
     void setPaths(const QString&, const QString&);
-    void setOpts(int, int, int, int, bool, bool, const QString&, const QString&, const QString&, const QString&);
+    void setOpts(int, int, int, int, bool, bool, const QString&, const QString&, const QString&, const QString&, int);
     void setGUIThreadSlotter(GUIThreadSlotter&);
     void run() override;
+    //TODO: possibly change defaults (these are questionable)
     // {
     //     /* ... here is the expensive or blocking operation ...
     //      *
@@ -322,12 +330,11 @@ public slots:
     void acceptConflictResult(int);
 signals:
     void doneMerging(QString);
-    void conflict(const QString&, const QString&, const QString&,
-                  const QString&, const QString&, const QString&);
+    void conflict(const QString&, const QString&, MCResourcePackElement*, MCResourcePackElement*);
     void progress(int bar, int progress);
 private:
     //set before exec
-    int mode, description, name, image;
+    int mode, description, name, image, selectedFormat;
     bool toMinecraft, exportAs;
     QString customDescription, customName, customImage, customPath;
     GUIThreadSlotter *slotter;
@@ -338,4 +345,4 @@ private:
     int conflictResult;
 };
 
-#endif // MERGENONDEFAULTWORKERTHREAD_H
+#endif // MERGEWORKERTHREAD_H

@@ -49,20 +49,11 @@ QuickMerge::QuickMerge(QWidget *parent)
     pack1 -> setIconSize(QSize(32,32));
     pack2 -> setIconSize(QSize(32,32));
 
-    // pack1->setStyleSheet("text-align:left;");
-    // pack2->setStyleSheet("text-align:left;");
-
-    // pack1->setLayout(new QGridLayout);
-    // pack2->setLayout(new QGridLayout);
-
     pack1ButtonLabel = new QLabel("...", this);
     pack2ButtonLabel = new QLabel("...", this);
 
     pack1ButtonLabel -> setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     pack2ButtonLabel -> setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-
-    // pack1ButtonLabel -> setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    // pack2ButtonLabel -> setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     pack1ButtonLabel  -> setFont(*new QFont("Bahnschrift",24,2,false));
     pack2ButtonLabel  -> setFont(*new QFont("Bahnschrift",24,2,false));
@@ -70,12 +61,7 @@ QuickMerge::QuickMerge(QWidget *parent)
     pack1ButtonLabel  -> setGeometry(68 ,195,300,50);
     pack2ButtonLabel  -> setGeometry(424,195,300,50);
 
-    // pack1 -> layout() -> addWidget(pack1ButtonLabel);
-    // pack2 -> layout() -> addWidget(pack2ButtonLabel);
-
     back  ->  setCheckable(false);
-    // pack1 ->  setCheckable (true);
-    // pack2 ->  setCheckable (true);
     merge ->  setCheckable(false);
     settings->setCheckable(false);
 
@@ -113,7 +99,6 @@ QuickMerge::QuickMerge(QWidget *parent)
     connect(merge, SIGNAL (clicked()), this, SLOT     (init()));
 
     qs = new QuickMergeSettings;
-    settingsSet = false;
 
     connect(settings, SIGNAL (clicked()), this, SLOT (settingss()));
     connect(qs, SIGNAL (quickMergeSettngsChanged(int,int,QString,int,QString,int,QString,int,QString,int)),
@@ -190,8 +175,6 @@ void QuickMerge::recievedSettingsUpdate(int modeR,
     int toMinecraftR, QString customPathR,
     int exportAsR)
 {
-    settingsSet = true;
-
     mode        = modeR;
     description = descriptionR;
     name        = nameR;
@@ -224,40 +207,24 @@ void QuickMerge::init(){
                     if((new QDir(filesSelected[0]+dirSlash+"resourcepacks"))->exists()){
                         mcDir -> setPath(filesSelected[0]);
                         Utils::MC_PATH = mcDir->path();
-                        //begin merging
-                        if(!settingsSet){
-                            //default settings merge
-                            if(Utils::mergeDefault(p1Path, p2Path)){
-                                QMessageBox::StandardButton post = QMessageBox::question(this, "MCPackTool", "Success! Do you want to return to the Main Menu?", QMessageBox::Yes | QMessageBox::No);
-                                if(post == QMessageBox::Yes){
-                                    //reset to defaults
-                                    this->reset();
-                                    emit toMain();
-                                }
+                        //begin merging & pass all them args
+                        if(Utils::merge(p1Path,p2Path,mode,
+                                                   description,customDescription,
+                                                   name,customName,
+                                                   image,customImage,
+                                                   toMinecraft,customPath,
+                                                   exportAs))
+                        {
+                            QMessageBox::StandardButton post = QMessageBox::question(this, "MCPackTool", "Success! Do you want to return to the Main Menu?", QMessageBox::Yes | QMessageBox::No);
+                            if(post == QMessageBox::Yes){
+                                //reset to defaults
+                                this->reset();
+                                emit toMain();
                             }
-                            //else
-                            //tbd: error catching
-                            //here or in Utils?
-                        }else{
-                            //pass all them args
-                            if(Utils::mergeNonDefault(p1Path,p2Path,mode,
-                                                       description,customDescription,
-                                                       name,customName,
-                                                       image,customImage,
-                                                       toMinecraft,customPath,
-                                                       exportAs))
-                            {
-                                QMessageBox::StandardButton post = QMessageBox::question(this, "MCPackTool", "Success! Do you want to return to the Main Menu?", QMessageBox::Yes | QMessageBox::No);
-                                if(post == QMessageBox::Yes){
-                                    //reset to defaults
-                                    this->reset();
-                                    emit toMain();
-                                }
-                            }
-                            //else
-                            //tbd: error catching
-                            //here or in Utils?
                         }
+                        //else
+                        //TODO: error catching
+
                     }else{
                         QMessageBox::critical(this, "MCPackTool", "Invalid directory.", QMessageBox::Ok);
                     }
@@ -265,40 +232,24 @@ void QuickMerge::init(){
             }
         }else{
             Utils::MC_PATH = mcDir->path();
-            //begin merging
-            if(!settingsSet){
-                //default settings merge
-                if(Utils::mergeDefault(p1Path, p2Path)){
-                    QMessageBox::StandardButton post = QMessageBox::question(this, "MCPackTool", "Success! Do you want to return to the Main Menu?", QMessageBox::Yes | QMessageBox::No);
-                    if(post == QMessageBox::Yes){
-                        //reset to defaults
-                        this->reset();
-                        emit toMain();
-                    }
+            //begin merging & pass all them args
+            if(Utils::merge(p1Path,p2Path,mode,
+                                       description,customDescription,
+                                       name,customName,
+                                       image,customImage,
+                                       toMinecraft,customPath,
+                                       exportAs))
+            {
+                QMessageBox::StandardButton post = QMessageBox::question(this, "MCPackTool", "Success! Do you want to return to the Main Menu?", QMessageBox::Yes | QMessageBox::No);
+                if(post == QMessageBox::Yes){
+                    //reset to defaults
+                    this->reset();
+                    emit toMain();
                 }
-                //else
-                //tbd: error catching
-                //here or in Utils?
-            }else{
-                //pass all them args
-                if(Utils::mergeNonDefault(p1Path,p2Path,mode,
-                                           description,customDescription,
-                                           name,customName,
-                                           image,customImage,
-                                           toMinecraft,customPath,
-                                           exportAs))
-                {
-                    QMessageBox::StandardButton post = QMessageBox::question(this, "MCPackTool", "Success! Do you want to return to the Main Menu?", QMessageBox::Yes | QMessageBox::No);
-                    if(post == QMessageBox::Yes){
-                        //reset to defaults
-                        this->reset();
-                        emit toMain();
-                    }
-                }
-                //else
-                //tbd: error catching
-                //here or in Utils?
             }
+            //else
+            //TODO: error catching
+
         }
     }
 }

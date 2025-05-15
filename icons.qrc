@@ -11,4 +11,8 @@
         <file>JSON.png</file>
         <file>UNKNOWN.png</file>
     </qresource>
+    <qresource prefix="/shaders">
+        <file>shaders/basic.frag</file>
+        <file>shaders/basic.vert</file>
+    </qresource>
 </RCC>

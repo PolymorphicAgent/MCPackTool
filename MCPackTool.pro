@@ -1,4 +1,4 @@
-QT       += core gui quick qml quickwidgets svg
+QT       += core gui quick qml quickwidgets svg opengl widgets openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,8 +18,9 @@ SOURCES += \
     mainmenu.cpp \
     mainwindow.cpp \
     mcresourcepack.cpp \
-    mergedefaultworkerthread.cpp \
-    mergenondefaultworkerthread.cpp \
+    # mergedefaultworkerthread.cpp \
+    mergeworkerthread.cpp \
+    modelpreviewwidget.cpp \
     newworkspace.cpp \
     progressmessagebox.cpp \
     quickmerge.cpp \
@@ -35,8 +36,9 @@ HEADERS += \
     mainmenu.h \
     mainwindow.h \
     mcresourcepack.h \
-    mergedefaultworkerthread.h \
-    mergenondefaultworkerthread.h \
+    # mergedefaultworkerthread.h \
+    mergeworkerthread.h \
+    modelpreviewwidget.h \
     newworkspace.h \
     progressmessagebox.h \
     quickmerge.h \
@@ -62,6 +64,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     mergenondefault.txt \
     quickmergesettings.txt \
+    scratchpad \
     todo.txt \
     ziplib/ziplib.md
 

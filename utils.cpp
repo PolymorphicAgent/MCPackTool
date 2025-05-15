@@ -17,8 +17,8 @@
 #include "combomessagebox.h"
 #include "guithreadslotter.h"
 #include "progressmessagebox.h"
-#include "mergedefaultworkerthread.h"
-#include "mergenondefaultworkerthread.h"
+// #include "mergedefaultworkerthread.h"
+#include "mergeworkerthread.h"
 
 QString Utils::getUser(){
     return USER;
@@ -240,122 +240,122 @@ bool Utils::isResourcepack(const QString& path) {
 // }
 
 // Example conversion for mergeDefault():
-bool Utils::mergeDefault(const QString& p1, const QString& p2) {
-    // Open the archives using KZip objects
-    KZip pack1(p1), pack2(p2);
-    if (!pack1.open(QIODevice::ReadOnly) || !pack2.open(QIODevice::ReadOnly)) {
-        QMessageBox::critical(nullptr, "MCPackTool", "Failed to open one of the pack archives.", QMessageBox::Ok);
-        return false;
-    }
+// bool Utils::mergeDefault(const QString& p1, const QString& p2) {
+//     // Open the archives using KZip objects
+//     KZip pack1(p1), pack2(p2);
+//     if (!pack1.open(QIODevice::ReadOnly) || !pack2.open(QIODevice::ReadOnly)) {
+//         QMessageBox::critical(nullptr, "MCPackTool", "Failed to open one of the pack archives.", QMessageBox::Ok);
+//         return false;
+//     }
 
-    const KArchiveDirectory *p1dir = pack1.directory();
-    const KArchiveDirectory *p2dir = pack2.directory();
+//     const KArchiveDirectory *p1dir = pack1.directory();
+//     const KArchiveDirectory *p2dir = pack2.directory();
 
-    // Get and parse the mcmeta entries from each pack
-    const KArchiveEntry *pack1mcmetaEntry = p1dir->entry("pack.mcmeta");
-    const KArchiveEntry *pack2mcmetaEntry = p2dir->entry("pack.mcmeta");
+//     // Get and parse the mcmeta entries from each pack
+//     const KArchiveEntry *pack1mcmetaEntry = p1dir->entry("pack.mcmeta");
+//     const KArchiveEntry *pack2mcmetaEntry = p2dir->entry("pack.mcmeta");
 
-    if (!pack1mcmetaEntry || !pack2mcmetaEntry || !pack1mcmetaEntry->isFile() || !pack2mcmetaEntry->isFile()) {
-        QMessageBox::critical(nullptr, "MCPackTool", "Missing pack.mcmeta in one of the packs.", QMessageBox::Ok);
-        return false;
-    }
+//     if (!pack1mcmetaEntry || !pack2mcmetaEntry || !pack1mcmetaEntry->isFile() || !pack2mcmetaEntry->isFile()) {
+//         QMessageBox::critical(nullptr, "MCPackTool", "Missing pack.mcmeta in one of the packs.", QMessageBox::Ok);
+//         return false;
+//     }
 
-    const KArchiveFile *pack1mcmetaFile = static_cast<const KArchiveFile*>(pack1mcmetaEntry);
-    const KArchiveFile *pack2mcmetaFile = static_cast<const KArchiveFile*>(pack2mcmetaEntry);
+//     const KArchiveFile *pack1mcmetaFile = static_cast<const KArchiveFile*>(pack1mcmetaEntry);
+//     const KArchiveFile *pack2mcmetaFile = static_cast<const KArchiveFile*>(pack2mcmetaEntry);
 
-    QByteArray data1 = pack1mcmetaFile->data();
-    QByteArray data2 = pack2mcmetaFile->data();
+//     QByteArray data1 = pack1mcmetaFile->data();
+//     QByteArray data2 = pack2mcmetaFile->data();
 
-    QJsonDocument p1mcmeta = QJsonDocument::fromJson(data1),
-                  p2mcmeta = QJsonDocument::fromJson(data2);
+//     QJsonDocument p1mcmeta = QJsonDocument::fromJson(data1),
+//                   p2mcmeta = QJsonDocument::fromJson(data2);
 
-    int p1format = p1mcmeta["pack"]["pack_format"].toInt(),
-        p2format = p2mcmeta["pack"]["pack_format"].toInt(),
-        selectedFormat = 0;
+//     int p1format = p1mcmeta["pack"]["pack_format"].toInt(),
+//         p2format = p2mcmeta["pack"]["pack_format"].toInt(),
+//         selectedFormat = 0;
 
-    QStringList p1Versions = formatToVersion(p1format),
-                p2Versions = formatToVersion(p2format);
+//     QStringList p1Versions = formatToVersion(p1format),
+//                 p2Versions = formatToVersion(p2format);
 
-    if (find("INVALID PACK FORMAT", p1Versions) != -1 && find("INVALID PACK FORMAT", p2Versions) != -1) {
-        QMessageBox::critical(new QLabel, "MCPackTool", "Both packs reference an invalid pack format.", QMessageBox::Ok);
-        return false;
-    }
+//     if (find("INVALID PACK FORMAT", p1Versions) != -1 && find("INVALID PACK FORMAT", p2Versions) != -1) {
+//         QMessageBox::critical(new QLabel, "MCPackTool", "Both packs reference an invalid pack format.", QMessageBox::Ok);
+//         return false;
+//     }
 
-    if (p1format != p2format) {
-        ComboMessageBox *prompt = new ComboMessageBox(mergeLists(p1Versions, p2Versions),
-                                                      "  Discrepancy in pack versions:\n  Pack 1: " + stringify(p1Versions) +
-                                                          "\n  Pack 2: " + stringify(p2Versions) +
-                                                          "\n  Which game version should the pack work with?");
-        prompt->exec();
-        selectedFormat = versionToFormat(prompt->comboBox()->currentText().left(prompt->comboBox()->currentText().size()-1));
-    } else {
-        selectedFormat = p1format;
-    }
+//     if (p1format != p2format) {
+//         ComboMessageBox *prompt = new ComboMessageBox(mergeLists(p1Versions, p2Versions),
+//                                                       "  Discrepancy in pack versions:\n  Pack 1: " + stringify(p1Versions) +
+//                                                           "\n  Pack 2: " + stringify(p2Versions) +
+//                                                           "\n  Which game version should the pack work with?");
+//         prompt->exec();
+//         selectedFormat = versionToFormat(prompt->comboBox()->currentText().left(prompt->comboBox()->currentText().size()-1));
+//     } else {
+//         selectedFormat = p1format;
+//     }
 
-    ProgressMessageBox *extraordinary = new ProgressMessageBox("Working...", {"Parsing Pack 1", "Parsing Pack 2", "Merging", "Exporting"});
+//     ProgressMessageBox *extraordinary = new ProgressMessageBox("Working...", {"Parsing Pack 1", "Parsing Pack 2", "Merging", "Exporting"});
 
-    // Thread-related code remains similar; now pass pointers/references to KZip objects
-    MergeDefaultWorkerThread *thread = new MergeDefaultWorkerThread();
-    thread->setPaths(p1, p2);
+//     // Thread-related code remains similar; now pass pointers/references to KZip objects
+//     MergeDefaultWorkerThread *thread = new MergeDefaultWorkerThread();
+//     thread->setPaths(p1, p2);
 
-    QWidget::connect(thread, &MergeDefaultWorkerThread::progress, extraordinary, &ProgressMessageBox::setProgress);
-    QWidget::connect(thread, &MergeDefaultWorkerThread::finished, thread, &QObject::deleteLater);
-    QWidget::connect(thread, &MergeDefaultWorkerThread::finished, extraordinary, &ProgressMessageBox::close);
-    QWidget::connect(thread, &MergeDefaultWorkerThread::doneMerging, &Utils::postMergeNonDefault);
+//     QWidget::connect(thread, &MergeDefaultWorkerThread::progress, extraordinary, &ProgressMessageBox::setProgress);
+//     QWidget::connect(thread, &MergeDefaultWorkerThread::finished, thread, &QObject::deleteLater);
+//     QWidget::connect(thread, &MergeDefaultWorkerThread::finished, extraordinary, &ProgressMessageBox::close);
+//     QWidget::connect(thread, &MergeDefaultWorkerThread::doneMerging, &Utils::postMergeNonDefault);
 
-    thread->start();
-    extraordinary->exec();
-    thread->wait();
+//     thread->start();
+//     extraordinary->exec();
+//     thread->wait();
 
-    // After merging, create and set up the output archive.
-    // Here we create a new KZip (outputArchive) and add/update entries (pack.mcmeta, pack.png).
-    KZip outputArchive(NAME);
+//     // After merging, create and set up the output archive.
+//     // Here we create a new KZip (outputArchive) and add/update entries (pack.mcmeta, pack.png).
+//     KZip outputArchive(NAME);
 
-    if (!outputArchive.open(QIODevice::ReadWrite)) {
-        QMessageBox::critical(nullptr, "MCPackTool", "Failed to create output archive.", QMessageBox::Ok);
-        return false;
-    }
+//     if (!outputArchive.open(QIODevice::ReadWrite)) {
+//         QMessageBox::critical(nullptr, "MCPackTool", "Failed to create output archive.", QMessageBox::Ok);
+//         return false;
+//     }
 
-    // Update the pack.mcmeta entry by modifying JSON content.
-    QJsonDocument oMcmeta = p1mcmeta;
-    QJsonObject oPack = p1mcmeta["pack"].toObject();
+//     // Update the pack.mcmeta entry by modifying JSON content.
+//     QJsonDocument oMcmeta = p1mcmeta;
+//     QJsonObject oPack = p1mcmeta["pack"].toObject();
 
-    oPack["description"] = oPack["description"].toString() + " {[Merged by MCPackTool]}";
-    oPack["pack_description"] = selectedFormat;
+//     oPack["description"] = oPack["description"].toString() + " {[Merged by MCPackTool]}";
+//     oPack["pack_description"] = selectedFormat;
 
-    QByteArray oMcmetaData = QJsonDocument(oPack).toJson();
+//     QByteArray oMcmetaData = QJsonDocument(oPack).toJson();
 
-    KArchiveDirectory dir = *outputArchive.directory();
-    KArchiveEntry mcmetaEntry = *dir.entry("pack.mcmeta");
+//     KArchiveDirectory dir = *outputArchive.directory();
+//     KArchiveEntry mcmetaEntry = *dir.entry("pack.mcmeta");
 
-    bool deleteSuccess = true;
-    Q_UNUSED(deleteSuccess);
+//     bool deleteSuccess = true;
+//     Q_UNUSED(deleteSuccess);
 
-    if (mcmetaEntry.isFile())
-        deleteSuccess = dir.removeEntryV2(&mcmetaEntry);
-    outputArchive.writeFile("pack.mcmeta", oMcmetaData);
+//     if (mcmetaEntry.isFile())
+//         deleteSuccess = dir.removeEntryV2(&mcmetaEntry);
+//     outputArchive.writeFile("pack.mcmeta", oMcmetaData);
 
-    // Copy the pack.png file from pack1 into the output archive.
-    KArchiveEntry pack1pngEntry = *pack1.directory()->entry("pack.png");
+//     // Copy the pack.png file from pack1 into the output archive.
+//     KArchiveEntry pack1pngEntry = *pack1.directory()->entry("pack.png");
 
-    if(pack1pngEntry.isFile()){
-        KArchiveFile *pack1pngFile = static_cast<KArchiveFile*>(&pack1pngEntry);
-        QByteArray pngData = pack1pngFile->data();
-        if (outputArchive.directory()->entry("pack.png") && outputArchive.directory()->entry("pack.png")->isFile())
-            deleteSuccess = dir.removeEntryV2(&pack1pngEntry);
-        outputArchive.writeFile("pack.png", pngData);
-    }
+//     if(pack1pngEntry.isFile()){
+//         KArchiveFile *pack1pngFile = static_cast<KArchiveFile*>(&pack1pngEntry);
+//         QByteArray pngData = pack1pngFile->data();
+//         if (outputArchive.directory()->entry("pack.png") && outputArchive.directory()->entry("pack.png")->isFile())
+//             deleteSuccess = dir.removeEntryV2(&pack1pngEntry);
+//         outputArchive.writeFile("pack.png", pngData);
+//     }
 
-    outputArchive.close();
+//     outputArchive.close();
 
-    // Cleanup temporary files if any.
-    QFile::remove(".mctmp/pack.mcmeta");
+//     // Cleanup temporary files if any.
+//     QFile::remove(".mctmp/pack.mcmeta");
 
-    if (!cp(NAME, MC_PATH + "/resourcepacks"))
-        QMessageBox::warning(nullptr, "MCPackTool", "Failed to copy to minecraft.", QMessageBox::Ok);
+//     if (!cp(NAME, MC_PATH + "/resourcepacks"))
+//         QMessageBox::warning(nullptr, "MCPackTool", "Failed to copy to minecraft.", QMessageBox::Ok);
 
-    return true;
-}
+//     return true;
+// }
 
 void Utils::postMergeNonDefault(QString name){
     NAME = name;
@@ -369,7 +369,7 @@ void Utils::postMergeNonDefault(QString name){
 //     emit instance().conflictResult(pro->result());
 // }
 
-bool Utils::mergeNonDefault(const QString& p1, const QString& p2, int modeR,
+bool Utils::merge(const QString& p1, const QString& p2, int modeR,
                             int descriptionR, QString customDescriptionR,
                             int nameR,        QString customNameR,
                             int imageR,       QString customImageR,
@@ -480,27 +480,24 @@ bool Utils::mergeNonDefault(const QString& p1, const QString& p2, int modeR,
     GUIThreadSlotter *conflictPrompterGUI = new GUIThreadSlotter();
 
     //---------------------- thread stuff
-    MergeNonDefaultWorkerThread *thread = new MergeNonDefaultWorkerThread();
+    MergeWorkerThread *thread = new MergeWorkerThread();
 
     thread->setPaths(p1, p2);
     thread->setOpts(modeR, descriptionR, nameR, imageR,
                     toMinecraftR, exportAsR,
-                    customDescriptionR, customNameR, customImageR, customPathR);
+                    customDescriptionR, customNameR, customImageR, customPathR, selectedFormat);
     thread->setGUIThreadSlotter(*conflictPrompterGUI);
 
-    QWidget::connect(thread, &MergeNonDefaultWorkerThread::progress   , extraordinary       ,    &ProgressMessageBox::setProgress);
-    QWidget::connect(thread, &MergeNonDefaultWorkerThread::finished   , thread              ,               &QObject::deleteLater);
-    QWidget::connect(thread, &MergeNonDefaultWorkerThread::finished   , extraordinary       ,          &ProgressMessageBox::close);
-    QWidget::connect(thread, &MergeNonDefaultWorkerThread::conflict   , conflictPrompterGUI , &GUIThreadSlotter::conflictPrompter);
-    QWidget::connect(thread, &MergeNonDefaultWorkerThread::doneMerging, &Utils::postMergeNonDefault);
+    QWidget::connect(thread, &MergeWorkerThread::progress   , extraordinary       ,    &ProgressMessageBox::setProgress);
+    QWidget::connect(thread, &MergeWorkerThread::finished   , thread              ,               &QObject::deleteLater);
+    QWidget::connect(thread, &MergeWorkerThread::finished   , extraordinary       ,          &ProgressMessageBox::close);
+    QWidget::connect(thread, &MergeWorkerThread::conflict   , conflictPrompterGUI , &GUIThreadSlotter::conflictPrompter);
+    QWidget::connect(thread, &MergeWorkerThread::doneMerging, &Utils::postMergeNonDefault);
 
     thread->start();
     //---------------------- end thread stuff
 
     extraordinary->exec();
-
-    //TODO: deal w/ postexec
-    Q_UNUSED(selectedFormat);
 
     return true;
 }

@@ -17,6 +17,7 @@ class MergeDefaultWorkerThread : public QThread
 public:
     explicit MergeDefaultWorkerThread(QObject *parent = nullptr);
     void setPaths(const QString&, const QString&);
+    // void extracted(QList<MCResourcePackElement *> &elems1, QSet<QString> &seen);
     void run() override;
     // {
     //     /* ... here is the expensive or blocking operation ...

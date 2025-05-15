@@ -1,0 +1,95 @@
+//--------------- HEADER ------------------
+
+#ifndef CONFLICTPROMPT_H
+#define CONFLICTPROMPT_H
+
+#include "MCResourcePack.h"
+
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QDialog>
+#include <QWidget>
+#include <QLabel>
+#include <QFrame>
+#include <QImage>
+#include <QIcon>
+
+class ConflictPrompt : public QDialog
+{
+    //Q_OBJECT
+public:
+    ConflictPrompt(const QString&, const QString&, MCResourcePackElement*, MCResourcePackElement*);
+    int result();
+public slots:
+    void updateR(bool);
+    void updateL(bool);
+    void accept() override;
+private:
+    int choice = 0;
+    QCheckBox *selL, *selR;
+    QString p1name, p1asset, p2name, p2asset;
+    QImage *p1image, *p2image;
+};
+
+#endif // CONFLICTPROMPT_H
+
+
+//--------------- SKELETON SOURCE ------------------
+#include "conflictprompt.h"
+
+#include <QApplication>
+#include <QCheckBox>
+#include <QScreen>
+#include <QStyle>
+
+#include "utils.h"
+
+ConflictPrompt::ConflictPrompt(const QString& p1nameR, const QString& p2nameR, MCResourcePackElement* e1R, MCResourcePackElement* e2R)
+{
+
+    //build gui with layouts
+
+    //add functionality to "do this for all remaining items"
+
+    //add a cancel button which aborts merging
+        //if the dialog closed by the user with the red "X", they should be prompted if they wish to cancel merging
+
+    //somehow render textures in 3d with their right models (and animations, if applicible)
+
+    connect(okButton, SIGNAL (clicked()), this, SLOT (accept()));
+
+    connect(rightSelectCheckBox, &QCheckBox::clicked, this, [this]() {
+        updateR(selR->isChecked());
+    });
+
+    connect(leftSelectCheckBox, &QCheckBox::clicked, this, [this]() {
+        updateL(selL->isChecked());
+    });
+
+    selL->setChecked(true);//arbitrary default
+
+}
+
+int ConflictPrompt::result(){return this->choice;}
+
+void ConflictPrompt::updateR(bool checked){
+    if(checked && selL->isChecked())
+        selL->setChecked(false);
+}
+
+void ConflictPrompt::updateL(bool checked){
+    if(checked && selR->isChecked())
+        selR->setChecked(false);
+}
+
+void ConflictPrompt::accept(){
+    if(selL->isChecked())
+        choice = 1;
+    else if(selR->isChecked())
+        choice = 2;
+    else
+        choice = -1;
+
+    QDialog::accept();
+}
