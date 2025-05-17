@@ -3,10 +3,11 @@
 #include "quickmerge.h"
 #include "utils.h"
 
+#include <QSurfaceFormat>
 #include <QApplication>
-#include <QPushButton>
 #include <QMessageBox>
-#include <QLayout>
+// #include <QPushButton>
+// #include <QLayout>
 //#include <QProgressBar>
 //#include <QSlider>
 // #include "conflictprompt.h"
@@ -17,6 +18,20 @@
 
 int main(int argc, char *argv[])
 {
+
+    // <- MUST come *before* QApplication is constructed:
+    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+
+    QSurfaceFormat fmt;
+    fmt.setRenderableType(QSurfaceFormat::OpenGL);
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+    // Request ES2 / GL2 compatibility:
+    fmt.setVersion(2, 0);
+    fmt.setDepthBufferSize(24);
+    fmt.setStencilBufferSize(8);
+    QSurfaceFormat::setDefaultFormat(fmt);
+
     QApplication a(argc, argv);
 
     //the most important 5 lines of code in this whole project

@@ -44,15 +44,21 @@ ConflictPrompt::ConflictPrompt(const QString& p1nameR, const QString& p2nameR, M
 
     mainLayout->addLayout(contentLayout);
 
-    // Button
+    // Buttons
     okButton = new QPushButton("Apply");
+    cancelButton = new QPushButton("Cancel");
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
     buttonLayout->setAlignment(Qt::AlignHCenter);
     mainLayout->addLayout(buttonLayout);
 
     // Connections
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(cancelButton, &QPushButton::clicked, this, [this](){
+        this->choice = -1;
+        QDialog::accept();
+    });
     connect(selL, &QCheckBox::clicked, this, [this](bool checked) {
         if (checked) selR->setChecked(false);
     });
@@ -60,6 +66,14 @@ ConflictPrompt::ConflictPrompt(const QString& p1nameR, const QString& p2nameR, M
         if (checked) selL->setChecked(false);
     });
 
+    //start OpenGL
+    leftPreview->update();
+    rightPreview->update();
+
+}
+
+ConflictPrompt::~ConflictPrompt(){
+    flush();
 }
 
 int ConflictPrompt::result(){return this->choice;}
@@ -73,9 +87,16 @@ void ConflictPrompt::updateL(bool checked){
 }
 
 void ConflictPrompt::accept(){
+    qDebug() << "Preview size:" << leftPreview->size();
+
     if(selL->isChecked())choice = 1;
     else if(selR->isChecked())choice = 2;
     else choice = -1;
 
     QDialog::accept();
+}
+
+void ConflictPrompt::flush(){
+    rightPreview->cleanupResources();
+    leftPreview->cleanupResources();
 }

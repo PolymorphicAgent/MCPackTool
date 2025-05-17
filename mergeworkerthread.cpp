@@ -119,6 +119,8 @@ void MergeWorkerThread::run() {
 
                 connect(slotter, &GUIThreadSlotter::conflictResult, &loop, &QEventLoop::quit);
                 connect(slotter, &GUIThreadSlotter::conflictResult, this , &MergeWorkerThread::acceptConflictResult);
+                //cleanup graphics resources, etc. (you're welcome, OpenGL...)
+                connect(slotter, &GUIThreadSlotter::conflictResult, this, [this](){slotter->resetDialog();});
 
                 emit conflict(QFileInfo(p1path).baseName(), QFileInfo(p2path).baseName(), merged.at(idx1), e2);
 
@@ -130,11 +132,20 @@ void MergeWorkerThread::run() {
                 loop.exec();
                 int choice = conflictResult; // 1=left, 2=right, -1 = cancel
 
+                if(choice == -1){
+                    return;
+                }
+
                 if (choice == 2) {
                     // replace with pack2’s version
                     merged[idx1] = e2;
                 }
                 // if choice==1, keep merged[idx1]
+
+                //TODO: get "apply to rest" from user
+
+                //cleanup graphics resources, etc. (you're welcome, OpenGL...)
+                // slotter->resetDialog();
             } else {
                 merged.append(e2);
             }
@@ -261,7 +272,6 @@ void MergeWorkerThread::run() {
     const KArchiveEntry *mcmetaEntry = root->entry("pack.mcmeta");
 
     bool deleteSuccess = true;
-    Q_UNUSED(deleteSuccess);
 
     if (mcmetaEntry)
         deleteSuccess = ((KArchiveDirectory*)root)->removeEntryV2((KArchiveEntry*)mcmetaEntry);
@@ -284,8 +294,9 @@ void MergeWorkerThread::run() {
     if (testPngEntry)
         deleteSuccess = ((KArchiveDirectory*)root)->removeEntryV2((KArchiveEntry*)testPngEntry);
 
-    zip.writeFile("pack.png", packImgBytes);
+    Q_UNUSED(deleteSuccess);
 
+    zip.writeFile("pack.png", packImgBytes);
 
     zip.close();
     emit progress(2, 100);

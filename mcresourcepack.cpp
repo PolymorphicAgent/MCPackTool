@@ -77,7 +77,7 @@ void MCResourcePack::parse()
         //    QByteArray data = ...;
         //    QString relPath = ...;
         //    files.append(qMakePair(relPath, data));
-        qDebug() << "Parsing zip file:" << m_path;
+        // qDebug() << "Parsing zip file:" << m_path;
 
         KZip archive(m_path);
         if (!archive.open(QIODevice::ReadOnly)) {
