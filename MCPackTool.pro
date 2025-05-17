@@ -66,7 +66,7 @@ DISTFILES += \
     quickmergesettings.txt \
     scratchpad \
     todo.txt \
-    ziplib/ziplib.md
+    README.md
 
 RESOURCES += \
     icons.qrc
