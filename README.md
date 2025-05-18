@@ -46,6 +46,22 @@ latest edit: experimenting with OpenGL to render Minecraft assets in 3d from res
 3) Configuring the environment in QT creator
     - In file explorer, you should be able to right-click open the project file `MCPackTool.pro` with QT creator, the IDE that integrates best with the QT Framework.
     
-        a) 
+        a) Once QT Creator loads, you should be on the "configure project screen". Deselect whatever default kit pops up, and select `Desktop Qt 6.9.0 MSVC2022 64bit`
+
+            - **This project NEEDS MSVC to work!**
+
+        b) Hit `Configure Project" in the bottom corner.
+        
+4) Test Build!
+    - Once you've got this environment set up, make sure "Debug" is selected as the build configuration in the bottom left corner, and the selected kit is `Desktop Qt 6.9.0 MSVC2022 64bit`.
+    
+        a) Hit the green play button to run the build process!
+        
+        b) If it compiles correctly, **you should get an error about failed dependencies**. This is a bug that I will get around to fixing soon. Any other errors signify a misconfigured environment.
+            
+            - To Supress this error, simply copy the two files `copy.bat` and `copyA.bat` to the build/Desktop_blahblah_MSVC_blahblah folder
+
+5) Contributing to the project
+    - ...
 
 to be finished...
