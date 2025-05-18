@@ -9,8 +9,13 @@ latest edit: experimenting with OpenGL to render Minecraft assets in 3d from res
 # Setting up the environment
 This is really finniky so buckle up...
 
-- 1) installing QT
+**ONLY TESTED ON WINDOWS 64 bit - Any other OS's are not guaranteed to work.**
 
-- 2) pulling via git
+1) Installing / Setting up QT
+
+ - please note that this will take up approximately 40 GB of storage space depending on your operating system.
+a)
+
+2) pulling via git
 
 to be finished...
