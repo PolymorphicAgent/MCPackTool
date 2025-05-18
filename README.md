@@ -25,6 +25,11 @@ This is really finniky so buckle up...
         
         e) Finish the installation process. It will take a while!
 
-2) pulling via git
+2) Cloning this project via git
 
+    - Once QT installed, you are ready to clone this project and set up the enivronment!
+
+        a) Open command prompt to your Documents folder, making sure it's NOT your OneDrive Documents (onedrive will attempt to upload everything...) or wherever you keep your projects
+
+        b) 
 to be finished...
