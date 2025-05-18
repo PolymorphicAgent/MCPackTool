@@ -59,7 +59,7 @@ latest edit: experimenting with OpenGL to render Minecraft assets in 3d from res
         
         b) If it compiles correctly, **you should get an error about failed dependencies**. This is a bug that I will get around to fixing soon. Any other errors signify a misconfigured environment.
             
-        - To Supress this error, simply copy the two files `copy.bat` and `copyA.bat` to the build/Desktop_blahblah_MSVC_blahblah folder
+        - To Supress this error, simply copy the two files `copy.bat` and `copyA.bat` to the `build/Desktop_blahblah_MSVC_blahblah` folder
 
 5) Contributing to the project
     - Before making changes, make sure you have the latest changes (in case I've already fixed the bug you see)
