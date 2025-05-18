@@ -1,7 +1,8 @@
 # MCPackTool
 
-
 Goal: to allow user-friendly management, creation, and merging of minecraft resourcepacks
+
+*Note: I created most of this project as a 12-year-old, so I'm in the process of cleaning up messy code. The GUI is terrible. I know. I'll get to fixing it soon*
 
 Curently under development, so barely anything actually works. Use at your own risk.
 
