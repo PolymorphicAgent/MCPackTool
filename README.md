@@ -14,7 +14,8 @@ This is really finniky so buckle up...
 1) Installing / Setting up QT
 
  - please note that this will take up approximately 40 GB of storage space depending on your operating system.
-a)
+
+a) Download the QT installer from [this site](https://www.qt.io/download-qt-installer-oss)
 
 2) pulling via git
 
