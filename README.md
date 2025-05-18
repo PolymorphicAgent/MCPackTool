@@ -1,19 +1,24 @@
 # MCPackTool
+
+
 Goal: to allow user-friendly management, creation, and merging of minecraft resourcepacks
 
 Curently under development, so barely anything actually works. Use at your own risk.
 
-latest edit: experimenting with OpenGL to render Minecraft assets in 3d from resourcepacks. A lot of work to go...
+**Currently working functions:**
+- Quickmerge - all except "prompt at each conflict"
+
+
+latest edit: experimenting with OpenGL to render Minecraft assets in 3d from resourcepacks for the conflict prompter. A lot of work to go...
 
 
 # Setting up the environment
-This is really finniky so buckle up...
 
 **ONLY TESTED ON WINDOWS 64 bit - Any other OS's are not guaranteed to work.**
 
 1) Installing / Setting up QT
 
-    - please note that this will take up approximately a ton of storage space depending on the components you install. (the source code is massive)
+    - please note that this will take up a ton of storage space depending on the components you install. (the source code is massive)
 
         a) Download the QT installer from [this site](https://www.qt.io/download-qt-installer-oss).
         
