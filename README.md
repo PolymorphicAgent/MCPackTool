@@ -48,7 +48,7 @@ latest edit: experimenting with OpenGL to render Minecraft assets in 3d from res
     
         a) Once QT Creator loads, you should be on the "configure project screen". Deselect whatever default kit pops up, and select `Desktop Qt 6.9.0 MSVC2022 64bit`
 
-            - **This project NEEDS MSVC to work!**
+        - **This project NEEDS MSVC to work!**
 
         b) Hit `Configure Project" in the bottom corner.
         
@@ -59,9 +59,18 @@ latest edit: experimenting with OpenGL to render Minecraft assets in 3d from res
         
         b) If it compiles correctly, **you should get an error about failed dependencies**. This is a bug that I will get around to fixing soon. Any other errors signify a misconfigured environment.
             
-            - To Supress this error, simply copy the two files `copy.bat` and `copyA.bat` to the build/Desktop_blahblah_MSVC_blahblah folder
+        - To Supress this error, simply copy the two files `copy.bat` and `copyA.bat` to the build/Desktop_blahblah_MSVC_blahblah folder
 
 5) Contributing to the project
-    - ...
+    - Before making changes, make sure you have the latest changes (in case I've already fixed the bug you see)
+    
+        a) `git fetch`
+    
+        b) `git pull`
+        
+    - You're good to make changes! 
+    - To submit changes to the project, a Pull Request (PR) is needed.
+    
+        a) First, create the PR
 
 to be finished...
