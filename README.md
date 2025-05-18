@@ -71,6 +71,4 @@ latest edit: experimenting with OpenGL to render Minecraft assets in 3d from res
     - You're good to make changes! 
     - To submit changes to the project, a Pull Request (PR) is needed.
     
-        a) First, create the PR
-
-to be finished...
+        a) Learn about Pull Requests and how to make them [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
