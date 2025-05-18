@@ -31,5 +31,10 @@ This is really finniky so buckle up...
 
         a) Open command prompt to your Documents folder, making sure it's NOT your OneDrive Documents (onedrive will attempt to upload everything...) or wherever you keep your projects
 
-        b) 
+        - Note: you must have [git for windows](https://git-scm.com/downloads/win) installed for this next step if you wish to be able to contribute to the project. 
+        - You may skip this and directly download and unzip the source code, but you will be unable to contribute to the project.
+        
+        b) Run `git clone https://github.com/PolymorphicAgent/MCPackTool.git` after git has been installed
+        - You should see a new folder named `MCPackTool' appear in your Documents folder (or wherever you decided to put it)
+        
 to be finished...
