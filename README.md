@@ -13,7 +13,7 @@ This is really finniky so buckle up...
 
 1) Installing / Setting up QT
 
-    - please note that this will take up approximately 40 GB of storage space depending on your operating system.
+    - please note that this will take up approximately a ton of storage space depending on the components you install. (the source code is massive)
 
         a) Download the QT installer from [this site](https://www.qt.io/download-qt-installer-oss).
         
@@ -35,6 +35,11 @@ This is really finniky so buckle up...
         - You may skip this and directly download and unzip the source code, but you will be unable to contribute to the project.
         
         b) Run `git clone https://github.com/PolymorphicAgent/MCPackTool.git` after git has been installed
-        - You should see a new folder named `MCPackTool' appear in your Documents folder (or wherever you decided to put it)
+        - You should see a new folder named `MCPackTool' appear in your Documents folder (or wherever you decided to put it) 
         
+3) Configuring the environment in QT creator
+    - In file explorer, you should be able to right-click open the project file `MCPackTool.pro` with QT creator, the IDE that integrates best with the QT Framework.
+    
+        a) 
+
 to be finished...
