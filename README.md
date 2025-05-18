@@ -13,9 +13,17 @@ This is really finniky so buckle up...
 
 1) Installing / Setting up QT
 
- - please note that this will take up approximately 40 GB of storage space depending on your operating system.
+    - please note that this will take up approximately 40 GB of storage space depending on your operating system.
 
-a) Download the QT installer from [this site](https://www.qt.io/download-qt-installer-oss)
+        a) Download the QT installer from [this site](https://www.qt.io/download-qt-installer-oss).
+        
+        b) You may have to create a free account with QT.
+        
+        c) I reccomend keeping the default installation directory (at C:/Qt)
+        
+        d) Select "Qt 6.9 for desktop development"
+        
+        e) Finish the installation process. It will take a while!
 
 2) pulling via git
 
