@@ -1,12 +1,13 @@
 # MCPackTool
 
-Goal: to allow user-friendly management, creation, and merging of minecraft resourcepacks
+**Goal: to allow user-friendly management, creation, and merging of minecraft resourcepacks**
+
 
 *Note: I created most of this project as a 12-year-old, so I'm in the process of cleaning up messy code. The GUI is terrible. I know. I'll get to fixing it soon.*
 
 **Once I finish a major bit of functionality (most likely QuickMerge), and tidy up the code and GUI, I'll make this README more in-depth!**
  
-Curently under development, so barely anything actually works. Use at your own risk.
+_Curently under development, so barely anything actually works. Use at your own risk._
 
 **Currently working functions:**
 - Quickmerge - all except "prompt at each conflict"

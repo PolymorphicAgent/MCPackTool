@@ -87,7 +87,7 @@ void ConflictPrompt::updateL(bool checked){
 }
 
 void ConflictPrompt::accept(){
-    qDebug() << "Preview size:" << leftPreview->size();
+    // qDebug() << "Preview size:" << leftPreview->size();
 
     if(selL->isChecked())choice = 1;
     else if(selR->isChecked())choice = 2;

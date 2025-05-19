@@ -10,13 +10,6 @@
 
 #include <cmath>
 
-// ModelPreviewWidget::ModelPreviewWidget(MCResourcePackElement* element, QWidget *parent) :
-//     QOpenGLWidget(parent), element(element), currentFrame(0), zoom(3.0f)
-// {
-//     setFocusPolicy(Qt::StrongFocus);
-//     setMinimumSize(200,200);
-// }
-
 struct Vertex { float x,y,z; float r,g,b; };
 
 ModelPreviewWidget::ModelPreviewWidget(MCResourcePackElement* element, QWidget* parent)
@@ -59,10 +52,10 @@ void ModelPreviewWidget::initializeGL() {
 
     initializeOpenGLFunctions();
 
-    auto fmt = context()->format();
-    qDebug() << "Got GL:" << fmt.renderableType()
-             << fmt.majorVersion() << fmt.minorVersion()
-             << (fmt.profile()==QSurfaceFormat::CoreProfile?"Core":"Compat");
+    // auto fmt = context()->format();
+    // qDebug() << "Got GL:" << fmt.renderableType()
+    //          << fmt.majorVersion() << fmt.minorVersion()
+    //          << (fmt.profile()==QSurfaceFormat::CoreProfile?"Core":"Compat");
 
     // Ensure cleanup before context is destroyed
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelPreviewWidget::cleanupResources, Qt::DirectConnection);
@@ -71,7 +64,7 @@ void ModelPreviewWidget::initializeGL() {
     initShaders();
     initTestGeometry();
     // initGeometry();
-    loadTexture();
+    // loadTexture();
     glEnable(GL_DEPTH_TEST);
 
     // initializeOpenGLFunctions();
@@ -139,42 +132,42 @@ void ModelPreviewWidget::paintGL() {
     m_program.bind();
     m_vao.bind();
 
-    // QMatrix4x4 mv;
-    // mv.translate(0,0,-3);
-    // mv.scale(m_zoom);
-    // mv.rotate(m_pitch,1,0,0);
-    // mv.rotate(m_yaw,0,1,0);
-
-    // m_program.setUniformValue("u_projMatrix", m_proj);
-    // m_program.setUniformValue("u_modelViewMatrix", mv);
-
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // m_vao.release();
-    // m_program.release();
-
-    QMatrix4x4 modelView;
-    modelView.translate(0, 0, -5.0f);
-    modelView.scale(m_zoom);
-    modelView.rotate(m_pitch, 1, 0, 0);
-    modelView.rotate(m_yaw, 0, 1, 0);
+    QMatrix4x4 mv;
+    mv.translate(0,0,-3);
+    mv.scale(m_zoom);
+    mv.rotate(m_pitch,1,0,0);
+    mv.rotate(m_yaw,0,1,0);
 
     m_program.setUniformValue("u_projMatrix", m_proj);
-    m_program.setUniformValue("u_modelViewMatrix", modelView);
+    m_program.setUniformValue("u_modelViewMatrix", mv);
 
-    glActiveTexture(GL_TEXTURE0);
-
-    if (m_texture) {
-        // qDebug()<<"binding texture...";
-        m_texture->bind();
-        m_program.setUniformValue("u_texture", 0);
-        m_program.setUniformValue("u_lightDir",  QVector3D(0.5f, 1.0f, 0.8f));
-    }
-
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     m_vao.release();
     m_program.release();
+
+    // QMatrix4x4 modelView;
+    // modelView.translate(0, 0, -5.0f);
+    // modelView.scale(m_zoom);
+    // modelView.rotate(m_pitch, 1, 0, 0);
+    // modelView.rotate(m_yaw, 0, 1, 0);
+
+    // m_program.setUniformValue("u_projMatrix", m_proj);
+    // m_program.setUniformValue("u_modelViewMatrix", modelView);
+
+    // glActiveTexture(GL_TEXTURE0);
+
+    // if (m_texture) {
+    //     // qDebug()<<"binding texture...";
+    //     m_texture->bind();
+    //     m_program.setUniformValue("u_texture", 0);
+    //     m_program.setUniformValue("u_lightDir",  QVector3D(0.5f, 1.0f, 0.8f));
+    // }
+
+    // glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+
+    // m_vao.release();
+    // m_program.release();
 
     // QMatrix4x4 projection;
     // projection.perspective(45.0f, float(width()) / height(), 0.1f, 100.0f);
