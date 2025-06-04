@@ -13,7 +13,10 @@ _Curently under development, so barely anything actually works. Use at your own 
 - Quickmerge - all except "prompt at each conflict"
 
 
-latest edit: experimenting with OpenGL to render Minecraft assets in 3d from resourcepacks for the conflict prompter. A lot of work to go...
+~~latest edit: experimenting with OpenGL to render Minecraft assets in 3d from resourcepacks for the conflict prompter. A lot of work to go...~~
+
+
+latest edit: I got a test triangle to render, but when I started looking for vertices, none existed! Therefore, I must refactor my resourcepack parsing logic (again)...
 
 
 # Setting up the environment
