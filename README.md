@@ -3,6 +3,9 @@
 **Goal: to allow user-friendly management, creation, and merging of minecraft resourcepacks**
 
 
+**This Project has been abandoned until further notice! (I started college and suddenly had no free time)**
+
+
 *Note: I created most of this project as a 12-year-old, so I'm in the process of cleaning up messy code. The GUI is terrible. I know. I'll get to fixing it soon.*
 
 **Once I finish a major bit of functionality (most likely QuickMerge), and tidy up the code and GUI, I'll make this README more in-depth!**
