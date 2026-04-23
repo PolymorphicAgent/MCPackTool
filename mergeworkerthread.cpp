@@ -249,6 +249,8 @@ void MergeWorkerThread::run() {
     QJsonDocument outputMcmeta = pack1.getPackMcmeta();
     QJsonObject outputMcmetaPack = outputMcmeta["pack"].toObject();
 
+    //TODO: more in-depth mcmeta processing
+
     if(description == 0)
         outputMcmetaPack["description"] = outputMcmetaPack["description"].toString() + " {[Merged by MCPackTool]}";
     else if(description == 1)

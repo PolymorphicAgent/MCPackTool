@@ -1,7 +1,7 @@
 #version 330 core
 
 layout(location = 0) in vec3 a_position;
-layout(location = 1) in vec3 a_normal;
+layout(location = 1) in vec3 a_normal; //unused until normals are supplied
 layout(location = 2) in vec2 a_texcoord;
 
 uniform mat4 u_projMatrix;
@@ -19,5 +19,5 @@ void main() {
 
     // Transform normal by the upper‐left 3×3 of the modelView
     // (you could also use a mat3(u_modelViewMatrix) if no non‐uniform scale)
-    v_normal = mat3(u_modelViewMatrix) * a_normal;
+    v_normal = mat3(u_modelViewMatrix) * a_normal; //currently all zeros
 }

@@ -1,1 +1,392 @@
-yeet
+//############ HEADER #############
+
+#ifndef MODELPREVIEWWIDGET_H
+#define MODELPREVIEWWIDGET_H
+
+#include "MCResourcePack.h"
+
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLFunctions>
+#include <QOpenGLTexture>
+#include <QOpenGLBuffer>
+#include <QOpenGLWidget>
+#include <QMatrix4x4>
+#include <QTimer>
+#include <QImage>
+
+class ModelPreviewWidget : public QOpenGLWidget, protected QOpenGLFunctions
+{
+    Q_OBJECT
+public:
+    explicit ModelPreviewWidget(MCResourcePackElement* element, QWidget *parent = nullptr);
+    ~ModelPreviewWidget();
+
+    void cleanupResources();
+
+protected:
+    void initializeGL() override;
+    void resizeGL(int w, int h) override;
+    void paintGL() override;
+
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent *event) override;
+
+private slots:
+    void onTimeout();  // Timer slot for animation updates
+
+private:
+    void initShaders();
+    void initTestGeometry();
+    void initGeometry();
+    void loadTexture();
+    void updateAnimation();
+
+    MCResourcePackElement* m_element;
+    QOpenGLShaderProgram m_program;
+    QOpenGLBuffer m_vertexBuffer;
+    QOpenGLBuffer m_indexBuffer;
+    QOpenGLVertexArrayObject m_vao;
+    QOpenGLTexture* m_texture{nullptr};
+
+    QVector<float> m_vertices;
+    QVector<unsigned int> m_indices;
+
+    // Transformation
+    QMatrix4x4 m_proj;
+    float m_zoom{1.0f};
+    QVector2D m_lastMousePos;
+    float m_pitch{0.0f};
+    float m_yaw{0.0f};
+
+    // Animation
+    bool m_animated{false};
+    QVector<int> m_frameList;
+    QVector<int> m_frameDurations;
+    int m_frameCount{0};
+    int m_currentFrameIndex{0};
+    int m_elapsedTime{0};
+    QTimer m_timer;
+
+};
+
+#endif // MODELPREVIEWWIDGET_H
+
+// ########## SOURCE ###########
+
+#include "modelpreviewwidget.h"
+
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+
+#include <QWheelEvent>
+#include <QMouseEvent>
+#include <QDateTime>
+
+#include <cmath>
+
+struct Vertex { float x,y,z; float r,g,b; };
+
+ModelPreviewWidget::ModelPreviewWidget(MCResourcePackElement* element, QWidget* parent)
+    : QOpenGLWidget(parent), m_element(element),
+    m_vertexBuffer(QOpenGLBuffer::VertexBuffer),
+    m_indexBuffer(QOpenGLBuffer::IndexBuffer)
+{
+    setFocusPolicy(Qt::StrongFocus);
+    setMinimumSize(200,200);
+
+    m_animated = m_element->isAnimated();
+    if (m_animated) {
+        QJsonObject anim = m_element->getAnimation().object();
+        QJsonArray frames = anim.value("frames").toArray();
+        int defaultDuration = anim.value("animation_time").toInt(1);
+        for (const QJsonValue& v : std::as_const(frames)) {
+            if (v.isObject()) {
+                int index = v.toObject().value("index").toInt();
+                int duration = v.toObject().value("time").toInt(defaultDuration);
+                m_frameList.append(index);
+                m_frameDurations.append(duration);
+            } else if (v.isDouble()) {
+                int index = v.toInt();
+                m_frameList.append(index);
+                m_frameDurations.append(defaultDuration);
+            }
+        }
+        m_frameCount = m_frameList.size();
+        connect(&m_timer, &QTimer::timeout, this, &ModelPreviewWidget::onTimeout);
+        m_timer.start(50); // ~20 FPS updates
+    }
+}
+
+ModelPreviewWidget::~ModelPreviewWidget() {
+    cleanupResources();
+}
+
+void ModelPreviewWidget::initializeGL() {
+    qDebug() << "initializeGL called";
+
+    initializeOpenGLFunctions();
+
+    // Ensure cleanup before context is destroyed
+    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelPreviewWidget::cleanupResources, Qt::DirectConnection);
+
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);    // <- non‑black background
+    initShaders();
+    // initTestGeometry();
+    initGeometry();
+    loadTexture();
+    glEnable(GL_DEPTH_TEST);
+}
+
+void ModelPreviewWidget::resizeGL(int w, int h) {
+    qDebug() << "resizeGL called";
+    glViewport(0, 0, w, h);
+    m_proj.setToIdentity();
+    m_proj.perspective(45.0f, GLfloat(w) / h, 0.1f, 100.0f);
+}
+
+void ModelPreviewWidget::paintGL() {
+    qDebug() << "paintGL called";
+
+    QMatrix4x4 modelView;
+    modelView.translate(0, 0, -5.0f);
+    modelView.scale(m_zoom);
+    modelView.rotate(m_pitch, 1, 0, 0);
+    modelView.rotate(m_yaw, 0, 1, 0);
+
+    m_program.setUniformValue("u_projMatrix", m_proj);
+    m_program.setUniformValue("u_modelViewMatrix", modelView);
+
+    glActiveTexture(GL_TEXTURE0);
+
+    if (m_texture) {
+        qDebug()<<"binding texture...";
+        m_texture->bind();
+        m_program.setUniformValue("u_texture", 0);
+        m_program.setUniformValue("u_lightDir",  QVector3D(0.5f, 1.0f, 0.8f));
+    }
+
+    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+
+    m_vao.release();
+    m_program.release();
+}
+
+void ModelPreviewWidget::mousePressEvent(QMouseEvent* event) {
+    m_lastMousePos = QVector2D(event->pos());
+}
+
+void ModelPreviewWidget::mouseMoveEvent(QMouseEvent* event) {
+    QVector2D delta = QVector2D(event->pos()) - m_lastMousePos;
+    m_yaw   += delta.x() * 0.5f;
+    m_pitch += delta.y() * 0.5f;
+    m_lastMousePos = QVector2D(event->pos());
+    update();
+}
+
+void ModelPreviewWidget::wheelEvent(QWheelEvent* event) {
+    float delta = event->angleDelta().y() / 120.0f;
+    m_zoom *= std::pow(1.1f, delta);
+    update();
+}
+
+void ModelPreviewWidget::onTimeout() {
+    if (!m_animated || m_frameCount == 0)
+        return;
+    m_elapsedTime += m_timer.interval();
+    int duration = m_frameDurations.at(m_currentFrameIndex);
+    if (m_elapsedTime >= duration * 50) {
+        m_elapsedTime = 0;
+        m_currentFrameIndex = (m_currentFrameIndex + 1) % m_frameCount;
+        // Reload texture for next frame
+        delete m_texture;
+        m_texture = nullptr;
+        loadTexture();
+        update();
+    }
+}
+
+void ModelPreviewWidget::initShaders() {
+
+    m_program.addShaderFromSourceFile(QOpenGLShader::Vertex,   ":/gl/shaders/vsrc.glsl");
+    m_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/gl/shaders/fsrc.glsl");
+
+    m_program.bindAttributeLocation("a_position", 0);
+    m_program.bindAttributeLocation("a_normal",   1);
+    m_program.bindAttributeLocation("a_texcoord", 2);
+
+    if (!m_program.link()) {
+        qFatal("Shader link failed:\n%s", qPrintable(m_program.log()));
+    }
+
+}
+
+void ModelPreviewWidget::initGeometry() {
+    // Parse JSON model to fill m_vertices and m_indices
+    QJsonObject obj = m_element->getModel().object();
+    QJsonArray elements = obj.value("elements").toArray();
+    int baseVertex = 0;
+
+    for (const QJsonValue& elVal : std::as_const(elements)) {
+        QJsonObject el = elVal.toObject();
+        QJsonArray from = el.value("from").toArray();
+        QJsonArray to   = el.value("to").toArray();
+        QVector3D v0(from[0].toDouble(), from[1].toDouble(), from[2].toDouble());
+        QVector3D v1(to[0].toDouble(),   to[1].toDouble(),   to[2].toDouble());
+        // For simplicity, build a box: 8 vertices, 36 indices (12 triangles)
+        QVector< QVector3D > verts = {
+            {v0.x(), v0.y(), v0.z()}, {v1.x(), v0.y(), v0.z()},
+            {v1.x(), v1.y(), v0.z()}, {v0.x(), v1.y(), v0.z()},
+            {v0.x(), v0.y(), v1.z()}, {v1.x(), v0.y(), v1.z()},
+            {v1.x(), v1.y(), v1.z()}, {v0.x(), v1.y(), v1.z()}
+        };
+        // UV from the face definition
+        QJsonObject faces = el.value("faces").toObject();
+        for (auto it = faces.begin(); it != faces.end(); ++it) {
+            QJsonObject face = it.value().toObject();
+            QJsonArray uv = face.value("uv").toArray();
+            float u0 = uv[0].toDouble(), v0_ = uv[1].toDouble();
+            float u1 = uv[2].toDouble(), v1_ = uv[3].toDouble();
+            QVector< QVector2D > uvs = {{u0, v0_}, {u1, v0_}, {u1, v1_}, {u0, v1_}};
+            // Quad indices for this face (assumes ordering matches verts array)
+            QVector<int> idx = {0,1,2, 2,3,0};
+            for (int i = 0; i < 6; ++i) {
+                QVector3D pos = verts[idx[i]];
+                QVector2D tc  = uvs[idx[i] % 4];
+                m_vertices.push_back(pos.x());
+                m_vertices.push_back(pos.y());
+                m_vertices.push_back(pos.z());
+                m_vertices.push_back(tc.x() / 16.0f);
+                m_vertices.push_back(1.0f - tc.y() / 16.0f);
+                m_indices.push_back(baseVertex++);
+            }
+        }
+    }
+
+    m_vao.create();
+    m_vao.bind();
+    m_vertexBuffer.create();
+    m_vertexBuffer.bind();
+    m_vertexBuffer.allocate(m_vertices.constData(), m_vertices.size() * sizeof(float));
+
+    m_indexBuffer.create();
+    m_indexBuffer.bind();
+    m_indexBuffer.allocate(m_indices.constData(), m_indices.size() * sizeof(unsigned int));
+
+    m_program.enableAttributeArray(0);
+    m_program.setAttributeBuffer(0, GL_FLOAT, 0, 3, 5 * sizeof(float));
+    m_program.enableAttributeArray(1);
+    m_program.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
+
+    m_vao.release();
+    m_vertexBuffer.release();
+    m_indexBuffer.release();
+}
+
+void ModelPreviewWidget::loadTexture() {
+    QImage image = m_element->getTexture().convertToFormat(QImage::Format_RGBA8888);
+    if (image.isNull()) {
+        qWarning("ModelPreviewWidget: texture image is null");
+        return;
+    }
+    if (m_animated && m_frameCount > 0) {
+        // Animated: choose frame by cropping image
+        int frameIndex = m_frameList.at(m_currentFrameIndex);
+        int size = image.width();
+        int framesPerRow = size / 16;
+        int x = (frameIndex % framesPerRow) * 16;
+        int y = (frameIndex / framesPerRow) * 16;
+        image = image.copy(x, y, 16, 16);
+    }
+    if (m_texture) delete m_texture;
+    m_texture = new QOpenGLTexture(image.flipped());
+    m_texture->setMinificationFilter(QOpenGLTexture::Nearest);
+    m_texture->setMagnificationFilter(QOpenGLTexture::Nearest);
+    m_texture->setWrapMode(QOpenGLTexture::Repeat);
+}
+
+void ModelPreviewWidget::initTestGeometry() {
+    // Simple colored triangle
+    Vertex verts[3] = {
+        { 0.0f,  1.0f, 0.0f,   1,0,0},
+        {-1.0f, -1.0f, 0.0f,   0,1,0},
+        { 1.0f, -1.0f, 0.0f,   0,0,1}
+    };
+    m_vao.create(); m_vao.bind();
+    m_vertexBuffer.create(); m_vertexBuffer.bind();
+    m_vertexBuffer.allocate(verts, 3 * sizeof(Vertex));
+
+    m_program.enableAttributeArray(0);
+    m_program.setAttributeBuffer(0, GL_FLOAT, offsetof(Vertex,x), 3, sizeof(Vertex));
+    m_program.enableAttributeArray(1);
+    m_program.setAttributeBuffer(1, GL_FLOAT, offsetof(Vertex,r), 3, sizeof(Vertex));
+
+    m_vao.release();
+}
+
+void ModelPreviewWidget::cleanupResources() {
+    makeCurrent();
+    if (m_vao.isCreated())          m_vao.destroy();
+    if (m_vertexBuffer.isCreated()) m_vertexBuffer.destroy();
+    if (m_indexBuffer.isCreated())  m_indexBuffer.destroy();
+    if (m_program.isLinked())       m_program.removeAllShaders();
+    if (m_texture) {
+        if (m_texture->isCreated()) m_texture->destroy();
+        delete m_texture; m_texture = nullptr;
+    }
+    doneCurrent();
+}
+
+//##### SHADER SOURCES #######
+
+//fsrc.glsl
+
+#version 330 core
+
+in vec3 v_normal;
+in vec2 v_texcoord;
+
+uniform sampler2D u_texture;
+uniform vec3 u_lightDir;  // Should be normalized (e.g. vec3(0.5, 1.0, 0.8))
+
+out vec4 fragColor;
+
+void main() {
+    // Sample the block’s texture
+    vec4 texel = texture(u_texture, v_texcoord);
+
+    // Simple Lambertian diffuse (clamped to [0.5,1.0] so faces aren’t too dark)
+    float NdotL = max(dot(normalize(v_normal), normalize(u_lightDir)), 0.0);
+    float light = mix(0.5, 1.0, NdotL);
+
+    // Apply lighting to RGB, preserve alpha
+    fragColor = vec4(texel.rgb * light, texel.a);
+}
+
+//vsrc.glsl
+
+#version 330 core
+
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec2 a_texcoord;
+
+uniform mat4 u_projMatrix;
+uniform mat4 u_modelViewMatrix;
+
+out vec3 v_normal;
+out vec2 v_texcoord;
+
+void main() {
+    // Transform to clip‐space
+    gl_Position = u_projMatrix * u_modelViewMatrix * vec4(a_position, 1.0);
+
+    // Pass UV straight through
+    v_texcoord = a_texcoord;
+
+    // Transform normal by the upper‐left 3×3 of the modelView
+    // (you could also use a mat3(u_modelViewMatrix) if no non‐uniform scale)
+    v_normal = mat3(u_modelViewMatrix) * a_normal;
+}

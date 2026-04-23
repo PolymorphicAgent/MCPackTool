@@ -62,9 +62,9 @@ void ModelPreviewWidget::initializeGL() {
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);    // <- non‑black background
     initShaders();
-    initTestGeometry();
-    // initGeometry();
-    // loadTexture();
+    // initTestGeometry();
+    initGeometry();
+    loadTexture();
     glEnable(GL_DEPTH_TEST);
 
     // initializeOpenGLFunctions();
@@ -129,45 +129,48 @@ void ModelPreviewWidget::resizeGL(int w, int h) {
 void ModelPreviewWidget::paintGL() {
     // qDebug() << "paintGL called";
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
     m_program.bind();
     m_vao.bind();
 
-    QMatrix4x4 mv;
-    mv.translate(0,0,-3);
-    mv.scale(m_zoom);
-    mv.rotate(m_pitch,1,0,0);
-    mv.rotate(m_yaw,0,1,0);
-
-    m_program.setUniformValue("u_projMatrix", m_proj);
-    m_program.setUniformValue("u_modelViewMatrix", mv);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    m_vao.release();
-    m_program.release();
-
-    // QMatrix4x4 modelView;
-    // modelView.translate(0, 0, -5.0f);
-    // modelView.scale(m_zoom);
-    // modelView.rotate(m_pitch, 1, 0, 0);
-    // modelView.rotate(m_yaw, 0, 1, 0);
+    // QMatrix4x4 mv;
+    // mv.translate(0,0,-3);
+    // mv.scale(m_zoom);
+    // mv.rotate(m_pitch,1,0,0);
+    // mv.rotate(m_yaw,0,1,0);
 
     // m_program.setUniformValue("u_projMatrix", m_proj);
-    // m_program.setUniformValue("u_modelViewMatrix", modelView);
+    // m_program.setUniformValue("u_modelViewMatrix", mv);
 
-    // glActiveTexture(GL_TEXTURE0);
-
-    // if (m_texture) {
-    //     // qDebug()<<"binding texture...";
-    //     m_texture->bind();
-    //     m_program.setUniformValue("u_texture", 0);
-    //     m_program.setUniformValue("u_lightDir",  QVector3D(0.5f, 1.0f, 0.8f));
-    // }
-
-    // glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // m_vao.release();
     // m_program.release();
+
+    //-----
+
+    QMatrix4x4 modelView;
+    modelView.translate(0, 0, -5.0f);
+    modelView.scale(m_zoom);
+    modelView.rotate(m_pitch, 1, 0, 0);
+    modelView.rotate(m_yaw, 0, 1, 0);
+
+    m_program.setUniformValue("u_projMatrix", m_proj);
+    m_program.setUniformValue("u_modelViewMatrix", modelView);
+
+    glActiveTexture(GL_TEXTURE0);
+
+    if (m_texture) {
+        // qDebug()<<"binding texture...";
+        m_texture->bind();
+        m_program.setUniformValue("u_texture", 0);
+        m_program.setUniformValue("u_lightDir",  QVector3D(0.5f, 1.0f, 0.8f));
+    }
+
+    glDrawElements(GL_TRIANGLES, GLsizei(m_indices.size()), GL_UNSIGNED_INT, nullptr);
+
+    m_vao.release();
+    m_program.release();
 
     // QMatrix4x4 projection;
     // projection.perspective(45.0f, float(width()) / height(), 0.1f, 100.0f);
@@ -247,55 +250,56 @@ void ModelPreviewWidget::onTimeout() {
 
 void ModelPreviewWidget::initShaders() {
 
-    const char* vsrc = R"(
-        #version 330 core
-        layout(location=0) in vec3 a_position;
-        layout(location=1) in vec3 a_color;
-        out vec3 v_color;
-        uniform mat4 u_projMatrix;
-        uniform mat4 u_modelViewMatrix;
-        void main() {
-            gl_Position = u_projMatrix * u_modelViewMatrix * vec4(a_position, 1.0);
-            v_color = a_color;
-        }
-    )";
-    const char* fsrc = R"(
-        #version 330 core
-        in vec3 v_color;
-        out vec4 fragColor;
-        void main() {
-            fragColor = vec4(v_color, 1.0);
-        }
-    )";
+    // const char* vsrc = R"(
+    //     #version 330 core
+    //     layout(location=0) in vec3 a_position;
+    //     layout(location=1) in vec3 a_color;
+    //     out vec3 v_color;
+    //     uniform mat4 u_projMatrix;
+    //     uniform mat4 u_modelViewMatrix;
+    //     void main() {
+    //         gl_Position = u_projMatrix * u_modelViewMatrix * vec4(a_position, 1.0);
+    //         v_color = a_color;
+    //     }
+    // )";
+    // const char* fsrc = R"(
+    //     #version 330 core
+    //     in vec3 v_color;
+    //     out vec4 fragColor;
+    //     void main() {
+    //         fragColor = vec4(v_color, 1.0);
+    //     }
+    // )";
 
-    if (!m_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vsrc))
-        qDebug() << "Vertex shader compile error:" << m_program.log();
-    if (!m_program.addShaderFromSourceCode(QOpenGLShader::Fragment, fsrc))
-        qDebug() << "Fragment shader compile error:" << m_program.log();
-    m_program.bindAttributeLocation("a_position",0);
-    m_program.bindAttributeLocation("a_color",1);
-    if (!m_program.link())
-        qDebug() << "Shader link error:" << m_program.log();
+    // if (!m_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vsrc))
+    //     qDebug() << "Vertex shader compile error:" << m_program.log();
+    // if (!m_program.addShaderFromSourceCode(QOpenGLShader::Fragment, fsrc))
+    //     qDebug() << "Fragment shader compile error:" << m_program.log();
+    // m_program.bindAttributeLocation("a_position",0);
+    // m_program.bindAttributeLocation("a_color",1);
+    // if (!m_program.link())
+    //     qDebug() << "Shader link error:" << m_program.log();
 
     // m_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vsrc);
     // m_program.addShaderFromSourceCode(QOpenGLShader::Fragment, fsrc);
 
-    // m_program.addShaderFromSourceFile(QOpenGLShader::Vertex,   ":/gl/shaders/vsrc.glsl");
-    // m_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/gl/shaders/fsrc.glsl");
+    m_program.addShaderFromSourceFile(QOpenGLShader::Vertex,   ":/gl/shaders/vsrc.glsl");
+    m_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/gl/shaders/fsrc.glsl");
 
-    // m_program.bindAttributeLocation("a_position", 0);
-    // m_program.bindAttributeLocation("a_normal",   1);
-    // m_program.bindAttributeLocation("a_texcoord", 2);
+    m_program.bindAttributeLocation("a_position", 0);
+    m_program.bindAttributeLocation("a_normal",   1);
+    m_program.bindAttributeLocation("a_texcoord", 2);
 
-    // if (!m_program.link()) {
-    //     qFatal("Shader link failed:\n%s", qPrintable(m_program.log()));
-    // }
+    if (!m_program.link()) {
+        qFatal("Shader link failed:\n%s", qPrintable(m_program.log()));
+    }
 
 }
 
 void ModelPreviewWidget::initGeometry() {
     // Parse JSON model to fill m_vertices and m_indices
     QJsonObject obj = m_element->getModel().object();
+    qDebug()<<m_element->getModel().toJson();
     QJsonArray elements = obj.value("elements").toArray();
     int baseVertex = 0;
 
@@ -335,20 +339,31 @@ void ModelPreviewWidget::initGeometry() {
         }
     }
 
+    if (m_vertices.isEmpty() || m_indices.isEmpty()) {
+        qWarning() << "No geometry to draw!";
+        qWarning() << "m_vertices.isEmpty()"<<m_vertices.isEmpty();
+        qWarning() << "m_indices.isEmpty()"<<m_indices.isEmpty();
+        return;
+    }
+
     m_vao.create();
     m_vao.bind();
     m_vertexBuffer.create();
     m_vertexBuffer.bind();
-    m_vertexBuffer.allocate(m_vertices.constData(), m_vertices.size() * sizeof(float));
+    m_vertexBuffer.allocate(m_vertices.constData(), int(m_vertices.size() * sizeof(float)));
 
     m_indexBuffer.create();
     m_indexBuffer.bind();
-    m_indexBuffer.allocate(m_indices.constData(), m_indices.size() * sizeof(unsigned int));
+    m_indexBuffer.allocate(m_indices.constData(), int(m_indices.size() * sizeof(unsigned int)));
 
+    // tell the shader where to find each attribute:
+    //    a_position = location 0, 3 floats at offset 0, stride = 5 floats
     m_program.enableAttributeArray(0);
     m_program.setAttributeBuffer(0, GL_FLOAT, 0, 3, 5 * sizeof(float));
-    m_program.enableAttributeArray(1);
-    m_program.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
+
+    //    a_texcoord = location 2, 2 floats at offset 3, stride = 5 floats
+    m_program.enableAttributeArray(2);
+    m_program.setAttributeBuffer(2, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
 
     m_vao.release();
     m_vertexBuffer.release();
